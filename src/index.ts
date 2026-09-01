@@ -105,7 +105,18 @@ export class Vector {
       parsed.push(component);
     }
 
-    return new Vector(parsed);
+    const vector = new Vector(parsed);
+
+    // Scorability is asserted HERE, on the write path, not lazily at the first
+    // comparison. The reference does the same and the difference is not
+    // cosmetic: a degenerate vector that is only rejected when something scores
+    // against it has already been WRITTEN to a shared store, and every recall
+    // that later touches that row throws instead of returning results. Failing
+    // at construction puts the error where the caller can still do something
+    // about it — it has the embedding, and it knows which document produced it.
+    vector.sumOfSquares();
+
+    return vector;
   }
 
   /** The stored form: base64 of little-endian float64s. */
@@ -182,7 +193,7 @@ export class Vector {
   }
 
   /** Squared, because that is the form `cosine` wants. Cached: it is the hot path. */
-  private sumOfSquares(): number {
+  sumOfSquares(): number {
     if (this.#sumOfSquares !== null) return this.#sumOfSquares;
 
     let sum = 0;
