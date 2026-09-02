@@ -1,257 +1,266 @@
 {
-  "suite": "memory-vector-storage",
-  "schema_version": 1,
-  "corpus_version": "0.1.0",
-  "generated_by": "prism-parity:tools/generate-vector-storage.php for php; the ports' own runners for ts and py. Every packed string is execution output — a hand-authored base64 double would assert the author's model of IEEE 754.",
-  "cases": [
-    {
-      "id": "vec-0001",
-      "title": "exact binary fractions",
-      "values": [
-        0.5,
-        -0.25,
-        0.125
-      ],
-      "storage": {
-        "php": {
-          "refused": false,
-          "packed": "AAAAAAAA4D8AAAAAAADQvwAAAAAAAMA/",
-          "round_trips": true
+    "suite": "memory-vector-storage",
+    "schema_version": 1,
+    "corpus_version": "0.1.0",
+    "generated_by": "prism-parity:tools/generate-vector-storage.php for php; the ports' own runners for ts and py. Every packed string is execution output — a hand-authored base64 double would assert the author's model of IEEE 754.",
+    "cases": [
+        {
+            "id": "vec-0001",
+            "title": "exact binary fractions",
+            "since": "0.1.0",
+            "values": [
+                0.5,
+                -0.25,
+                0.125
+            ],
+            "storage": {
+                "php": {
+                    "refused": false,
+                    "packed": "AAAAAAAA4D8AAAAAAADQvwAAAAAAAMA/",
+                    "round_trips": true
+                },
+                "ts": {
+                    "refused": false,
+                    "packed": "AAAAAAAA4D8AAAAAAADQvwAAAAAAAMA/",
+                    "round_trips": true
+                },
+                "py": {
+                    "refused": false,
+                    "packed": "AAAAAAAA4D8AAAAAAADQvwAAAAAAAMA/",
+                    "round_trips": true
+                }
+            },
+            "notes": "Every component is exactly representable, so any disagreement here is in the byte order or the width, not in float rounding. The control: if this row differs the format is wrong, and every other row is noise.",
+            "agrees": true
         },
-        "ts": {
-          "refused": false,
-          "packed": "AAAAAAAA4D8AAAAAAADQvwAAAAAAAMA/",
-          "round_trips": true
+        {
+            "id": "vec-0002",
+            "title": "a single component",
+            "since": "0.1.0",
+            "values": [
+                1
+            ],
+            "storage": {
+                "php": {
+                    "refused": false,
+                    "packed": "AAAAAAAA8D8=",
+                    "round_trips": true
+                },
+                "ts": {
+                    "refused": false,
+                    "packed": "AAAAAAAA8D8=",
+                    "round_trips": true
+                },
+                "py": {
+                    "refused": false,
+                    "packed": "AAAAAAAA8D8=",
+                    "round_trips": true
+                }
+            },
+            "notes": "One double. Pins that the format carries no length prefix, no padding and no header — a reader that expected any of those would fail here first.",
+            "agrees": true
         },
-        "py": {
-          "refused": false,
-          "packed": "AAAAAAAA4D8AAAAAAADQvwAAAAAAAMA/",
-          "round_trips": true
+        {
+            "id": "vec-0003",
+            "title": "values with no exact binary form",
+            "since": "0.1.0",
+            "values": [
+                0.1,
+                0.2,
+                0.3
+            ],
+            "storage": {
+                "php": {
+                    "refused": false,
+                    "packed": "mpmZmZmZuT+amZmZmZnJPzMzMzMzM9M/",
+                    "round_trips": true
+                },
+                "ts": {
+                    "refused": false,
+                    "packed": "mpmZmZmZuT+amZmZmZnJPzMzMzMzM9M/",
+                    "round_trips": true
+                },
+                "py": {
+                    "refused": false,
+                    "packed": "mpmZmZmZuT+amZmZmZnJPzMzMzMzM9M/",
+                    "round_trips": true
+                }
+            },
+            "notes": "The classic. 0.1 has no exact double, so this row pins that all three languages store the SAME inexact value rather than each rounding its own way. A language that parsed the literal differently would diverge here and nowhere else.",
+            "agrees": true
+        },
+        {
+            "id": "vec-0004",
+            "title": "full double precision",
+            "since": "0.1.0",
+            "values": [
+                3.141592653589793
+            ],
+            "storage": {
+                "php": {
+                    "refused": false,
+                    "packed": "GC1EVPshCUA=",
+                    "round_trips": true
+                },
+                "ts": {
+                    "refused": false,
+                    "packed": "GC1EVPshCUA=",
+                    "round_trips": true
+                },
+                "py": {
+                    "refused": false,
+                    "packed": "GC1EVPshCUA=",
+                    "round_trips": true
+                }
+            },
+            "notes": "Seventeen significant digits. A format that round-tripped through a decimal string would lose the last one; this pins that it does not.",
+            "agrees": true
+        },
+        {
+            "id": "vec-0005",
+            "title": "alternating sign",
+            "since": "0.1.0",
+            "values": [
+                -1,
+                1,
+                -1,
+                1
+            ],
+            "storage": {
+                "php": {
+                    "refused": false,
+                    "packed": "AAAAAAAA8L8AAAAAAADwPwAAAAAAAPC/AAAAAAAA8D8=",
+                    "round_trips": true
+                },
+                "ts": {
+                    "refused": false,
+                    "packed": "AAAAAAAA8L8AAAAAAADwPwAAAAAAAPC/AAAAAAAA8D8=",
+                    "round_trips": true
+                },
+                "py": {
+                    "refused": false,
+                    "packed": "AAAAAAAA8L8AAAAAAADwPwAAAAAAAPC/AAAAAAAA8D8=",
+                    "round_trips": true
+                }
+            },
+            "notes": "Pins the sign bit across an even number of components, where a byte-order error inside a pair can cancel out and hide.",
+            "agrees": true
+        },
+        {
+            "id": "vec-0006",
+            "title": "both ends of the exponent range",
+            "since": "0.1.0",
+            "values": [
+                1e-300,
+                1e+300
+            ],
+            "storage": {
+                "php": {
+                    "refused": true,
+                    "packed": null,
+                    "round_trips": null
+                },
+                "ts": {
+                    "refused": true,
+                    "packed": null,
+                    "round_trips": null
+                },
+                "py": {
+                    "refused": true,
+                    "packed": null,
+                    "round_trips": null
+                }
+            },
+            "notes": "Near the limits of a double. A format that narrowed to float32 anywhere in the path would overflow the second component to infinity and underflow the first to zero, and both would still base64 cleanly.",
+            "agrees": true
+        },
+        {
+            "id": "vec-0007",
+            "title": "eight components",
+            "since": "0.1.0",
+            "values": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+            ],
+            "storage": {
+                "php": {
+                    "refused": false,
+                    "packed": "AAAAAAAA8D8AAAAAAAAAQAAAAAAAAAhAAAAAAAAAEEAAAAAAAAAUQAAAAAAAABhAAAAAAAAAHEAAAAAAAAAgQA==",
+                    "round_trips": true
+                },
+                "ts": {
+                    "refused": false,
+                    "packed": "AAAAAAAA8D8AAAAAAAAAQAAAAAAAAAhAAAAAAAAAEEAAAAAAAAAUQAAAAAAAABhAAAAAAAAAHEAAAAAAAAAgQA==",
+                    "round_trips": true
+                },
+                "py": {
+                    "refused": false,
+                    "packed": "AAAAAAAA8D8AAAAAAAAAQAAAAAAAAAhAAAAAAAAAEEAAAAAAAAAUQAAAAAAAABhAAAAAAAAAHEAAAAAAAAAgQA==",
+                    "round_trips": true
+                }
+            },
+            "notes": "Long enough that a chunking bug in the encoder has somewhere to show. Base64 encodes three bytes to four characters, so 64 bytes is not a multiple of the group size and the padding is exercised.",
+            "agrees": true
+        },
+        {
+            "id": "vec-0008",
+            "title": "no components at all",
+            "since": "0.1.0",
+            "values": [],
+            "storage": {
+                "php": {
+                    "refused": true,
+                    "packed": null,
+                    "round_trips": null
+                },
+                "ts": {
+                    "refused": true,
+                    "packed": null,
+                    "round_trips": null
+                },
+                "py": {
+                    "refused": true,
+                    "packed": null,
+                    "round_trips": null
+                }
+            },
+            "notes": "REFUSED in all three. An empty vector has no direction; storing one would put a row in the index that can never be scored and never be found.",
+            "agrees": true
+        },
+        {
+            "id": "vec-0009",
+            "title": "zero magnitude",
+            "since": "0.1.0",
+            "values": [
+                0,
+                0
+            ],
+            "storage": {
+                "php": {
+                    "refused": true,
+                    "packed": null,
+                    "round_trips": null
+                },
+                "ts": {
+                    "refused": true,
+                    "packed": null,
+                    "round_trips": null
+                },
+                "py": {
+                    "refused": true,
+                    "packed": null,
+                    "round_trips": null
+                }
+            },
+            "notes": "REFUSED in all three, and the interesting one: it is not empty and every component is finite and valid. Its magnitude is zero, so similarity against it is undefined — and returning 0.0 would be a plausible-looking number rather than an answer.",
+            "agrees": true
         }
-      },
-      "notes": "Every component is exactly representable, so any disagreement here is in the byte order or the width, not in float rounding. The control: if this row differs the format is wrong, and every other row is noise.",
-      "agrees": true
-    },
-    {
-      "id": "vec-0002",
-      "title": "a single component",
-      "values": [
-        1
-      ],
-      "storage": {
-        "php": {
-          "refused": false,
-          "packed": "AAAAAAAA8D8=",
-          "round_trips": true
-        },
-        "ts": {
-          "refused": false,
-          "packed": "AAAAAAAA8D8=",
-          "round_trips": true
-        },
-        "py": {
-          "refused": false,
-          "packed": "AAAAAAAA8D8=",
-          "round_trips": true
-        }
-      },
-      "notes": "One double. Pins that the format carries no length prefix, no padding and no header — a reader that expected any of those would fail here first.",
-      "agrees": true
-    },
-    {
-      "id": "vec-0003",
-      "title": "values with no exact binary form",
-      "values": [
-        0.1,
-        0.2,
-        0.3
-      ],
-      "storage": {
-        "php": {
-          "refused": false,
-          "packed": "mpmZmZmZuT+amZmZmZnJPzMzMzMzM9M/",
-          "round_trips": true
-        },
-        "ts": {
-          "refused": false,
-          "packed": "mpmZmZmZuT+amZmZmZnJPzMzMzMzM9M/",
-          "round_trips": true
-        },
-        "py": {
-          "refused": false,
-          "packed": "mpmZmZmZuT+amZmZmZnJPzMzMzMzM9M/",
-          "round_trips": true
-        }
-      },
-      "notes": "The classic. 0.1 has no exact double, so this row pins that all three languages store the SAME inexact value rather than each rounding its own way. A language that parsed the literal differently would diverge here and nowhere else.",
-      "agrees": true
-    },
-    {
-      "id": "vec-0004",
-      "title": "full double precision",
-      "values": [
-        3.141592653589793
-      ],
-      "storage": {
-        "php": {
-          "refused": false,
-          "packed": "GC1EVPshCUA=",
-          "round_trips": true
-        },
-        "ts": {
-          "refused": false,
-          "packed": "GC1EVPshCUA=",
-          "round_trips": true
-        },
-        "py": {
-          "refused": false,
-          "packed": "GC1EVPshCUA=",
-          "round_trips": true
-        }
-      },
-      "notes": "Seventeen significant digits. A format that round-tripped through a decimal string would lose the last one; this pins that it does not.",
-      "agrees": true
-    },
-    {
-      "id": "vec-0005",
-      "title": "alternating sign",
-      "values": [
-        -1,
-        1,
-        -1,
-        1
-      ],
-      "storage": {
-        "php": {
-          "refused": false,
-          "packed": "AAAAAAAA8L8AAAAAAADwPwAAAAAAAPC/AAAAAAAA8D8=",
-          "round_trips": true
-        },
-        "ts": {
-          "refused": false,
-          "packed": "AAAAAAAA8L8AAAAAAADwPwAAAAAAAPC/AAAAAAAA8D8=",
-          "round_trips": true
-        },
-        "py": {
-          "refused": false,
-          "packed": "AAAAAAAA8L8AAAAAAADwPwAAAAAAAPC/AAAAAAAA8D8=",
-          "round_trips": true
-        }
-      },
-      "notes": "Pins the sign bit across an even number of components, where a byte-order error inside a pair can cancel out and hide.",
-      "agrees": true
-    },
-    {
-      "id": "vec-0006",
-      "title": "both ends of the exponent range",
-      "values": [
-        1e-300,
-        1e+300
-      ],
-      "storage": {
-        "php": {
-          "refused": true,
-          "packed": null,
-          "round_trips": null
-        },
-        "ts": {
-          "refused": true,
-          "packed": null,
-          "round_trips": null
-        },
-        "py": {
-          "refused": true,
-          "packed": null,
-          "round_trips": null
-        }
-      },
-      "notes": "Near the limits of a double. A format that narrowed to float32 anywhere in the path would overflow the second component to infinity and underflow the first to zero, and both would still base64 cleanly.",
-      "agrees": true
-    },
-    {
-      "id": "vec-0007",
-      "title": "eight components",
-      "values": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8
-      ],
-      "storage": {
-        "php": {
-          "refused": false,
-          "packed": "AAAAAAAA8D8AAAAAAAAAQAAAAAAAAAhAAAAAAAAAEEAAAAAAAAAUQAAAAAAAABhAAAAAAAAAHEAAAAAAAAAgQA==",
-          "round_trips": true
-        },
-        "ts": {
-          "refused": false,
-          "packed": "AAAAAAAA8D8AAAAAAAAAQAAAAAAAAAhAAAAAAAAAEEAAAAAAAAAUQAAAAAAAABhAAAAAAAAAHEAAAAAAAAAgQA==",
-          "round_trips": true
-        },
-        "py": {
-          "refused": false,
-          "packed": "AAAAAAAA8D8AAAAAAAAAQAAAAAAAAAhAAAAAAAAAEEAAAAAAAAAUQAAAAAAAABhAAAAAAAAAHEAAAAAAAAAgQA==",
-          "round_trips": true
-        }
-      },
-      "notes": "Long enough that a chunking bug in the encoder has somewhere to show. Base64 encodes three bytes to four characters, so 64 bytes is not a multiple of the group size and the padding is exercised.",
-      "agrees": true
-    },
-    {
-      "id": "vec-0008",
-      "title": "no components at all",
-      "values": [],
-      "storage": {
-        "php": {
-          "refused": true,
-          "packed": null,
-          "round_trips": null
-        },
-        "ts": {
-          "refused": true,
-          "packed": null,
-          "round_trips": null
-        },
-        "py": {
-          "refused": true,
-          "packed": null,
-          "round_trips": null
-        }
-      },
-      "notes": "REFUSED in all three. An empty vector has no direction; storing one would put a row in the index that can never be scored and never be found.",
-      "agrees": true
-    },
-    {
-      "id": "vec-0009",
-      "title": "zero magnitude",
-      "values": [
-        0,
-        0
-      ],
-      "storage": {
-        "php": {
-          "refused": true,
-          "packed": null,
-          "round_trips": null
-        },
-        "ts": {
-          "refused": true,
-          "packed": null,
-          "round_trips": null
-        },
-        "py": {
-          "refused": true,
-          "packed": null,
-          "round_trips": null
-        }
-      },
-      "notes": "REFUSED in all three, and the interesting one: it is not empty and every component is finite and valid. Its magnitude is zero, so similarity against it is undefined — and returning 0.0 would be a plausible-looking number rather than an answer.",
-      "agrees": true
-    }
-  ],
-  "divergence_note": "Every row agrees. It did NOT when this suite was written: both ports asserted scorability lazily, at the first comparison, where the reference asserts it on the write path. vec-0006 and vec-0009 were stored by the ports and refused by the reference. That is not cosmetic -- a degenerate vector the ports accepted was written to a shared store, and every recall that later touched that row threw instead of returning results. Fixed in both ports rather than recorded as a divergence, because unlike G-20 and G-21 this one had a right answer."
+    ],
+    "divergence_note": "Every row agrees. It did NOT when this suite was written: both ports asserted scorability lazily, at the first comparison, where the reference asserts it on the write path. vec-0006 and vec-0009 were stored by the ports and refused by the reference. That is not cosmetic -- a degenerate vector the ports accepted was written to a shared store, and every recall that later touched that row threw instead of returning results. Fixed in both ports rather than recorded as a divergence, because unlike G-20 and G-21 this one had a right answer."
 }
