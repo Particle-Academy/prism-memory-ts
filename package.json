@@ -1,6 +1,6 @@
 {
   "name": "@particle-academy/prism-memory",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Persistent context, semantic recall, and the vector-store contract, for TypeScript.",
   "type": "module",
   "sideEffects": false,
